@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Enrollment Confirmed - Aventro Edu Tech</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+</head>
+<body class="sale-page">
+
+  <nav id="navbar" class="sale-nav">
+    <div class="nav-inner">
+      <a href="{{ url_for('index') }}" class="nav-logo">
+        <div class="logo-text">Aventro Edu Tech</div>
+      </a>
+    </div>
+  </nav>
+
+  <main class="purchase-success-page">
+    <div class="container">
+      <div class="success-card">
+        <div class="success-icon">✓</div>
+        <h1>Enrollment Request Received!</h1>
+        <p class="success-message">Thank you, <strong>{{ order.customer_name }}</strong>. Your enrollment for <strong>{{ order.course_title }}</strong> has been submitted successfully.</p>
+
+        <div class="success-details">
+          <div class="success-detail-row">
+            <span>Order ID</span>
+            <span>#{{ order._id }}</span>
+          </div>
+          <div class="success-detail-row">
+            <span>Course</span>
+            <span>{{ order.course_title }}</span>
+          </div>
+          <div class="success-detail-row">
+            <span>Amount</span>
+            <span>{{ format_price({'amount': order.amount, 'currency': order.currency}) }}</span>
+          </div>
+          <div class="success-detail-row">
+            <span>Status</span>
+            <span class="status-badge status-badge--pending">{{ order.status | capitalize }}</span>
+          </div>
+          <div class="success-detail-row">
+            <span>Contact Email</span>
+            <span>{{ order.customer_email }}</span>
+          </div>
+        </div>
+
+        <p class="success-next">Our team will contact you at <strong>{{ order.customer_phone }}</strong> within 24 hours to complete payment and share course access details.</p>
+
+        <div class="success-actions">
+          <a href="{{ url_for('index') }}#internship" class="btn btn-primary">Browse More Courses</a>
+          {% if course %}
+          <a href="{{ url_for('course_detail', course_id=course._id) }}" class="btn btn-ghost">View Course Details</a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

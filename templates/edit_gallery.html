@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Edit Gallery Image - Aventro Edu Tech</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+  <style>
+    body {
+      background: #f5f5f5;
+    }
+    .form-container {
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 40px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    .form-container h1 {
+      color: #003366;
+      margin-bottom: 30px;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      color: #003366;
+      font-weight: 600;
+    }
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #e8f0fe;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-family: 'Montserrat', sans-serif;
+    }
+    .form-group textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+    .form-group input:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: #004a99;
+    }
+    .btn {
+      padding: 14px 30px;
+      background: #004a99;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .btn:hover {
+      background: #003366;
+    }
+    .btn-secondary {
+      background: #6c757d;
+      margin-left: 10px;
+    }
+    .btn-secondary:hover {
+      background: #5a6268;
+    }
+    .back-link {
+      margin-bottom: 20px;
+    }
+    .back-link a {
+      color: #004a99;
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .current-image-preview {
+      margin-top: 12px;
+      max-width: 250px;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <div class="form-container">
+    <div class="back-link">
+      <a href="{{ url_for('admin_dashboard') }}">← Back to Admin Portal</a>
+    </div>
+    
+    <h1>Edit Gallery Image</h1>
+    
+    <form method="POST" action="{{ url_for('edit_gallery', item_id=item._id) }}" enctype="multipart/form-data">
+      <div class="form-group">
+        <label for="title">Title</label>
+        <input type="text" id="title" name="title" value="{{ item.title }}" required />
+      </div>
+      
+      <div class="form-group">
+        <label for="caption">Caption / Description (optional)</label>
+        <textarea id="caption" name="caption">{{ item.caption }}</textarea>
+      </div>
+
+      <div class="form-group">
+        <label style="display: flex; align-items: center; cursor: pointer;">
+          <input type="checkbox" id="is_active" name="is_active" {% if item.is_active != False %}checked{% endif %} style="width: auto; margin-right: 12px;" />
+          <span>Active (Visible on public Gallery page)</span>
+        </label>
+      </div>
+      
+      <div class="form-group">
+        <label for="image">Replace Gallery Image (leave empty to keep current)</label>
+        <input type="file" id="image" name="image" accept="image/png, image/jpeg, image/jpg, image/gif, image/webp" />
+        <small style="color: #666; font-size: 0.85rem; display: block; margin-top: 6px; margin-bottom: 12px;">Allowed formats: PNG, JPG, JPEG, GIF, WEBP (Max 16MB)</small>
+        
+        {% if item.image %}
+        <span style="font-size: 0.9rem; font-weight: 600; color: #003366;">Current Image:</span>
+        <img class="current-image-preview" src="{{ item.image }}" alt="{{ item.title }}" />
+        {% endif %}
+      </div>
+      
+      <button type="submit" class="btn">Save Changes</button>
+      <a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary">Cancel</a>
+    </form>
+  </div>
+</body>
+</html>

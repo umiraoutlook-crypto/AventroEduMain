@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pay for {{ course.title }} - Aventro Edu Tech</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+</head>
+<body class="payment-page">
+
+  <header class="payment-header">
+    <div class="container payment-header-inner">
+      <a href="{{ url_for('course_detail', course_id=course._id) }}" class="payment-back">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        Back to Course
+      </a>
+      <div class="payment-brand">
+        <span class="logo-text">Aventro Edu Tech</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="payment-main">
+    <div class="container payment-container">
+      <div class="payment-hero">
+        <h1 class="payment-title">Complete Your Payment</h1>
+        <p class="payment-subtitle">
+          Pay for <strong>{{ course.title }}</strong> via UPI, upload your payment screenshot, verify with OTP, and join the course WhatsApp group.
+        </p>
+      </div>
+
+      <ol class="payment-steps" id="payment-steps">
+        <li class="payment-step is-active" data-step="1">
+          <span class="payment-step-num">1</span>
+          Scan &amp; Pay
+        </li>
+        <li class="payment-step" data-step="2">
+          <span class="payment-step-num">2</span>
+          Upload Proof
+        </li>
+        <li class="payment-step" data-step="3">
+          <span class="payment-step-num">3</span>
+          Verify OTP
+        </li>
+        <li class="payment-step" data-step="4">
+          <span class="payment-step-num">4</span>
+          Join Group
+        </li>
+      </ol>
+
+      <div class="payment-layout">
+        <!-- Step 1 & 2: Pay + Upload -->
+        <div id="panel-pay" class="payment-flow">
+          <div class="payment-card">
+            <h2 class="payment-card-title">
+              <svg class="payment-card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M7 7h.01M7 12h.01M7 17h.01M12 7h5M12 12h5M12 17h5"/></svg>
+              Scan to Pay
+            </h2>
+            <p class="payment-card-desc">Open any UPI app (GPay, PhonePe, Paytm) and scan the QR code below to pay <strong>{{ format_price(course) }}</strong>.</p>
+
+            <div class="payment-qr-wrap">
+              <img src="{{ url_for('static', filename='image.png') }}" alt="UPI QR Code" class="payment-qr-img" />
+            </div>
+
+            <span class="payment-upi-label">Amount to Pay</span>
+            <div class="payment-upi-row">
+              <span class="payment-upi-id">{{ format_price(course) }}</span>
+            </div>
+          </div>
+
+          <div class="payment-card">
+            <h2 class="payment-card-title">
+              <svg class="payment-card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+              Upload Payment Screenshot
+            </h2>
+            <p class="payment-card-desc">After paying, upload a screenshot of your successful transaction. We'll send an OTP to <strong>{{ user.email }}</strong> for verification.</p>
+
+            <form id="upload-form" enctype="multipart/form-data">
+              <input type="file" id="screenshot-input" name="screenshot" accept="image/png,image/jpeg,image/jpg,image/webp" hidden />
+
+              <div class="payment-dropzone" id="dropzone">
+                <div class="payment-dropzone-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                </div>
+                <span class="payment-dropzone-text">Click or drag to upload screenshot</span>
+                <span class="payment-dropzone-hint">PNG, JPG up to 10 MB</span>
+              </div>
+
+              <div class="payment-preview" id="preview-wrap" hidden>
+                <img id="preview-img" src="" alt="Payment screenshot preview" />
+                <button type="button" class="payment-preview-remove" id="remove-preview">Remove</button>
+              </div>
+
+              <label class="payment-field">
+                <span class="payment-field-label">Phone Number (optional)</span>
+                <input type="tel" name="phone" class="payment-input" placeholder="+91 98765 43210" />
+              </label>
+
+              <button type="submit" class="btn btn-primary payment-submit" id="upload-btn" disabled>
+                Upload &amp; Send OTP
+              </button>
+              <p class="payment-form-status" id="upload-status"></p>
+            </form>
+          </div>
+        </div>
+
+        <!-- Step 3: OTP Verification -->
+        <div id="panel-otp" class="payment-card" hidden style="max-width: 480px; margin: 0 auto;">
+          <h2 class="payment-card-title">
+            <svg class="payment-card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+            Enter Verification OTP
+          </h2>
+          <p class="payment-card-desc">We've sent a 6-digit OTP to <strong>{{ user.email }}</strong>. Enter it below to confirm your payment.</p>
+
+          <form id="otp-form">
+            <input type="hidden" id="order-id" value="" />
+            <label class="payment-field">
+              <span class="payment-field-label">6-Digit OTP</span>
+              <input type="text" id="otp-input" class="payment-input payment-otp-input" maxlength="6" pattern="[0-9]{6}" placeholder="000000" autocomplete="one-time-code" inputmode="numeric" required />
+            </label>
+            <button type="submit" class="btn btn-primary payment-submit" id="verify-btn">
+              Verify OTP
+            </button>
+            <p class="payment-form-status" id="otp-status"></p>
+          </form>
+        </div>
+
+        <!-- Step 4: Success + WhatsApp -->
+        <div id="panel-success" class="payment-success" hidden>
+          <div class="payment-success-badge">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+          </div>
+          <h2 class="payment-success-title">Payment Verified!</h2>
+          <p class="payment-success-desc">You're enrolled in <strong>{{ course.title }}</strong>. Join our WhatsApp group to get course materials, updates, and connect with fellow learners.</p>
+
+          <div class="payment-whatsapp-card">
+            <div class="payment-whatsapp-actions">
+              <h3 style="font-size: 1.2rem; font-weight: 800; margin-bottom: 8px;">Course WhatsApp Group</h3>
+              <p style="opacity: 0.85; margin-bottom: 20px; font-size: 0.9rem;">Click below to join the group and start learning with your batch.</p>
+              <a href="#" id="whatsapp-link" class="btn btn-whatsapp" target="_blank" rel="noopener noreferrer">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.435 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                Join WhatsApp Group
+              </a>
+              <p class="payment-whatsapp-hint">Save this link — you'll need it to access course content and live sessions.</p>
+            </div>
+          </div>
+
+          <a href="{{ url_for('index') }}#internship" class="payment-success-home">← Back to Courses</a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="payment-footer">
+    <div class="container">
+      <p>&copy; 2026 Aventro Edu Tech. Secure payment verification.</p>
+    </div>
+  </footer>
+
+  <script>
+    window.PAYMENT_CONFIG = {
+      courseId: "{{ course._id }}",
+      uploadUrl: "{{ url_for('upload_payment', course_id=course._id) }}",
+      verifyUrl: "{{ url_for('verify_payment_otp', course_id=course._id) }}",
+      whatsappLink: "{{ whatsapp_link }}"
+    };
+  </script>
+  <script src="{{ url_for('static', filename='js/payment.js') }}"></script>
+</body>
+</html>

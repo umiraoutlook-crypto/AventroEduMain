@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Portal - Aventro Edu Tech</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+  <style>
+    body {
+      background: #f5f5f5;
+    }
+    .admin-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+    .admin-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 40px;
+    }
+    .admin-header h1 {
+      color: #003366;
+    }
+    .admin-nav {
+      display: flex;
+      gap: 15px;
+    }
+    .admin-nav a {
+      padding: 10px 20px;
+      background: #004a99;
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: 600;
+      transition: background 0.3s;
+    }
+    .admin-nav a:hover {
+      background: #003366;
+    }
+    .section {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      margin-bottom: 30px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    .section h2 {
+      color: #003366;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #e8f0fe;
+      padding-bottom: 10px;
+    }
+    .item-list {
+      display: grid;
+      gap: 15px;
+    }
+    .item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px;
+      background: #f8f9fa;
+      border-radius: 8px;
+      border-left: 4px solid #004a99;
+    }
+    .item-info h3 {
+      color: #003366;
+      margin-bottom: 5px;
+    }
+    .item-info p {
+      color: #666;
+      font-size: 0.9rem;
+    }
+    .item-actions {
+      display: flex;
+      gap: 10px;
+    }
+    .item-actions a {
+      padding: 8px 15px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+    .edit-btn {
+      background: #ffc107;
+      color: #333;
+    }
+    .delete-btn {
+      background: #dc3545;
+      color: white;
+    }
+    .flash-messages {
+      margin-bottom: 20px;
+    }
+    .flash-message {
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+    .flash-message.success {
+      background: #d4edda;
+      color: #155724;
+    }
+    .flash-message.error {
+      background: #f8d7da;
+      color: #721c24;
+    }
+    .empty-state {
+      text-align: center;
+      padding: 40px;
+      color: #999;
+    }
+    .status-pending { color: #856404; background: #fff3cd; padding: 4px 10px; border-radius: 4px; font-size: 0.8rem; }
+    .status-confirmed { color: #155724; background: #d4edda; padding: 4px 10px; border-radius: 4px; font-size: 0.8rem; }
+    .status-cancelled { color: #721c24; background: #f8d7da; padding: 4px 10px; border-radius: 4px; font-size: 0.8rem; }
+    .view-btn { background: #17a2b8; color: white; }
+    .confirm-btn { background: #28a745; color: white; }
+    .cancel-btn { background: #6c757d; color: white; }
+    .price-tag { font-weight: 700; color: #28a745; }
+  </style>
+</head>
+<body>
+  <div class="admin-container">
+    <div class="admin-header">
+      <h1>Admin Portal</h1>
+      <div class="admin-nav">
+        <a href="{{ url_for('index') }}">Back to Site</a>
+        <a href="{{ url_for('logout') }}">Logout</a>
+      </div>
+    </div>
+    
+    <div class="flash-messages">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            <div class="flash-message {{ category }}">{{ message }}</div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+    </div>
+    
+    <div class="section">
+      <h2>Courses Management</h2>
+      <a href="{{ url_for('add_course') }}" style="display: inline-block; padding: 10px 20px; background: #28a745; color: white; text-decoration: none; border-radius: 8px; margin-bottom: 20px; font-weight: 600;">+ Add New Course</a>
+      
+      <div class="item-list">
+        {% if courses %}
+          {% for course in courses %}
+          <div class="item">
+            <div class="item-info">
+              <h3>{{ course.title }}</h3>
+              <p>{{ course.category }} | <span class="price-tag">{{ format_price(course) }}</span> | {{ course.duration }}
+                {% if course.get('is_active') == False %}<span class="status-cancelled">Inactive</span>{% endif %}
+              </p>
+            </div>
+            <div class="item-actions">
+              <a href="{{ url_for('course_detail', course_id=course._id) }}" class="view-btn" target="_blank">View</a>
+              <a href="{{ url_for('edit_course', course_id=course._id) }}" class="edit-btn">Edit</a>
+              <a href="{{ url_for('delete_course', course_id=course._id) }}" class="delete-btn" onclick="return confirm('Are you sure you want to delete this course?');">Delete</a>
+            </div>
+          </div>
+          {% endfor %}
+        {% else %}
+          <div class="empty-state">No courses added yet. Click "Add New Course" to get started.</div>
+        {% endif %}
+      </div>
+    </div>
+    
+    <div class="section">
+      <h2>Blogs/Webinars Management</h2>
+      <a href="{{ url_for('add_blog') }}" style="display: inline-block; padding: 10px 20px; background: #28a745; color: white; text-decoration: none; border-radius: 8px; margin-bottom: 20px; font-weight: 600;">+ Add New Blog/Webinar</a>
+      
+      <div class="item-list">
+        {% if blogs %}
+          {% for blog in blogs %}
+          <div class="item">
+            <div class="item-info">
+              <h3>{{ blog.title }}</h3>
+              <p>{{ blog.category }} | {{ blog.date }} | {{ blog.mode }}</p>
+            </div>
+            <div class="item-actions">
+              <a href="{{ url_for('edit_blog', blog_id=blog._id) }}" class="edit-btn">Edit</a>
+              <a href="{{ url_for('delete_blog', blog_id=blog._id) }}" class="delete-btn" onclick="return confirm('Are you sure you want to delete this blog?');">Delete</a>
+            </div>
+          </div>
+          {% endfor %}
+        {% else %}
+          <div class="empty-state">No blogs/webinars added yet. Click "Add New Blog/Webinar" to get started.</div>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Gallery Management</h2>
+      <a href="{{ url_for('add_gallery') }}" style="display: inline-block; padding: 10px 20px; background: #28a745; color: white; text-decoration: none; border-radius: 8px; margin-bottom: 20px; font-weight: 600;">+ Add New Gallery Image</a>
+      
+      <div class="item-list">
+        {% if gallery_items %}
+          {% for item in gallery_items %}
+          <div class="item">
+            <div class="item-info" style="display: flex; align-items: center; gap: 15px;">
+              {% if item.image %}
+              <img src="{{ item.image }}" alt="{{ item.title }}" style="width: 65px; height: 65px; object-fit: cover; border-radius: 6px; border: 1px solid #ddd;" />
+              {% endif %}
+              <div>
+                <h3>{{ item.title }}</h3>
+                <p>{{ item.caption[:60] }}{% if item.caption|length > 60 %}...{% endif %} | {% if item.is_active != False %}<span class="status-confirmed">Active</span>{% else %}<span class="status-cancelled">Inactive</span>{% endif %}</p>
+              </div>
+            </div>
+            <div class="item-actions">
+              <a href="{{ url_for('edit_gallery', item_id=item._id) }}" class="edit-btn">Edit</a>
+              <a href="{{ url_for('delete_gallery', item_id=item._id) }}" class="delete-btn" onclick="return confirm('Are you sure you want to delete this gallery item?');">Delete</a>
+            </div>
+          </div>
+          {% endfor %}
+        {% else %}
+          <div class="empty-state">No gallery items uploaded yet. Click "+ Add New Gallery Image" to get started.</div>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Site Settings</h2>
+      <form method="POST" action="{{ url_for('update_whatsapp_link') }}" style="max-width: 600px;">
+        <div style="margin-bottom: 16px;">
+          <label for="whatsapp_group_link" style="display: block; font-weight: 600; color: #003366; margin-bottom: 8px;">WhatsApp Group Link</label>
+          <input type="url" id="whatsapp_group_link" name="whatsapp_group_link" value="{{ whatsapp_link }}" placeholder="https://chat.whatsapp.com/..." style="width: 100%; padding: 12px; border: 2px solid #e8f0fe; border-radius: 8px; font-family: inherit;" />
+          <p style="font-size: 0.85rem; color: #666; margin-top: 8px;">Students see this link after successful OTP verification during course payment.</p>
+        </div>
+        <button type="submit" style="padding: 10px 24px; background: #004a99; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">Save Settings</button>
+      </form>
+    </div>
+
+    <div class="section">
+      <h2>Course Orders / Enrollments</h2>
+      <div class="item-list">
+        {% if orders %}
+          {% for order in orders %}
+          <div class="item">
+            <div class="item-info">
+              <h3>{{ order.course_title }}</h3>
+              <p>{{ order.customer_name }} | {{ order.customer_email }} | {{ order.customer_phone }}</p>
+              <p><span class="price-tag">{{ format_price({'amount': order.amount, 'currency': order.currency}) }}</span> | {{ order.payment_method }} | <span class="status-{{ order.status }}">{{ order.status | replace('_', ' ') | capitalize }}</span></p>
+              {% if order.get('payment_screenshot') %}
+              <p><a href="{{ order.payment_screenshot }}" target="_blank" style="color: #004a99;">View Payment Screenshot</a></p>
+              {% endif %}
+            </div>
+            <div class="item-actions">
+              {% if order.status in ('pending', 'pending_verification') %}
+              <a href="{{ url_for('update_order_status', order_id=order._id, status='confirmed') }}" class="confirm-btn">Confirm</a>
+              <a href="{{ url_for('update_order_status', order_id=order._id, status='cancelled') }}" class="cancel-btn">Cancel</a>
+              {% endif %}
+            </div>
+          </div>
+          {% endfor %}
+        {% else %}
+          <div class="empty-state">No course orders yet. Orders appear here when users purchase courses.</div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</body>
+</html>

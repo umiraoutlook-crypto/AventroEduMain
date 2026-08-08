@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login - Aventro Edu Tech</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+  <style>
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      background: #020813;
+      overflow: hidden;
+      position: relative;
+      font-family: 'Montserrat', sans-serif;
+    }
+    
+    .orb-container {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+    }
+    
+    .bg-orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(100px);
+      opacity: 0.4;
+    }
+    
+    .orb-1 {
+      width: 450px;
+      height: 450px;
+      background: #004a99;
+      top: -150px;
+      left: -150px;
+      animation: float-slow 20s infinite ease-in-out;
+    }
+    
+    .orb-2 {
+      width: 400px;
+      height: 400px;
+      background: #ffd26f;
+      bottom: -100px;
+      right: -100px;
+      animation: float-slow 25s infinite ease-in-out reverse;
+    }
+    
+    .orb-3 {
+      width: 320px;
+      height: 320px;
+      background: #0066cc;
+      top: 40%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      animation: float-slow 18s infinite ease-in-out;
+    }
+    
+    @keyframes float-slow {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      50% { transform: translate(-20px, -40px) scale(1.05); }
+    }
+    
+    .login-container {
+      background: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 48px 40px;
+      border-radius: 24px;
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      max-width: 420px;
+      width: 100%;
+      position: relative;
+      z-index: 1;
+      color: #ffffff;
+    }
+    
+    .login-container h1 {
+      color: #ffffff;
+      margin-bottom: 8px;
+      text-align: center;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+    
+    .login-subtitle {
+      text-align: center;
+      font-size: 0.88rem;
+      color: rgba(255, 255, 255, 0.6);
+      margin-bottom: 32px;
+    }
+    
+    .form-group {
+      margin-bottom: 24px;
+    }
+    
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      color: rgba(255, 255, 255, 0.85);
+      font-weight: 600;
+      font-size: 0.75rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+    
+    .form-group input {
+      width: 100%;
+      padding: 14px 16px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 10px;
+      font-size: 0.95rem;
+      color: #ffffff;
+      font-family: 'Montserrat', sans-serif;
+      outline: none;
+      transition: all 0.3s;
+    }
+    
+    .form-group input:focus {
+      border-color: #ffd26f;
+      background: rgba(255, 255, 255, 0.08);
+      box-shadow: 0 0 16px rgba(255, 210, 111, 0.25);
+    }
+    
+    .btn {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(90deg, #ffd26f, #ffb830);
+      color: #020813;
+      border: none;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: transform 0.25s, box-shadow 0.25s;
+    }
+    
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 24px rgba(255, 210, 111, 0.35);
+    }
+    
+    .flash-messages {
+      margin-bottom: 24px;
+    }
+    
+    .flash-message {
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      text-align: center;
+      font-size: 0.88rem;
+      font-weight: 600;
+    }
+    
+    .flash-message.success {
+      background: rgba(40, 167, 69, 0.15);
+      color: #2fed76;
+      border: 1px solid rgba(40, 167, 69, 0.3);
+    }
+    
+    .flash-message.error {
+      background: rgba(220, 53, 69, 0.15);
+      color: #ff6b7a;
+      border: 1px solid rgba(220, 53, 69, 0.3);
+    }
+    
+    .back-link {
+      text-align: center;
+      margin-top: 24px;
+      font-size: 0.88rem;
+    }
+    
+    .back-link a {
+      color: rgba(255, 255, 255, 0.65);
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.2s;
+    }
+    
+    .back-link a:hover {
+      color: #ffd26f;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Background Orbs -->
+  <div class="orb-container">
+    <div class="bg-orb orb-1"></div>
+    <div class="bg-orb orb-2"></div>
+    <div class="bg-orb orb-3"></div>
+  </div>
+
+  <div class="login-container">
+    <h1>Login</h1>
+    <p class="login-subtitle">Sign in to access your dashboard and courses</p>
+    
+    <div class="flash-messages">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            <div class="flash-message {{ category }}">{{ message }}</div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+    </div>
+    
+    <form method="POST" action="{{ url_for('login') }}">
+      {% if next %}
+      <input type="hidden" name="next" value="{{ next }}" />
+      {% endif %}
+      
+      <div class="form-group">
+        <label for="username">Username</label>
+        <input type="text" id="username" name="username" placeholder="Enter your username" required autocomplete="username" />
+      </div>
+      
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" placeholder="Enter your password" required autocomplete="current-password" />
+      </div>
+      
+      <button type="submit" class="btn">Login</button>
+    </form>
+    
+    <div class="back-link">
+      <a href="{{ url_for('register') }}{% if next %}?next={{ next }}{% endif %}">Don't have an account? Register</a>
+    </div>
+    <div class="back-link">
+      <a href="{{ url_for('index') }}">← Back to Home</a>
+    </div>
+  </div>
+</body>
+</html>

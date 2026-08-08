@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{{ course.title }} - Aventro Edu Tech</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+</head>
+<body class="sale-page">
+
+  <nav id="navbar" class="sale-nav">
+    <div class="nav-inner">
+      <a href="{{ url_for('index') }}" class="nav-logo">
+        <div class="logo-text">Aventro Edu Tech</div>
+      </a>
+      <div class="nav-links" id="nav-links">
+        <a href="{{ url_for('index') }}" class="nav-link">Home</a>
+        <a href="{{ url_for('index') }}#internship" class="nav-link">Courses</a>
+        <a href="{{ url_for('index') }}#webinars" class="nav-link">Webinars</a>
+        <a href="{{ url_for('gallery') }}" class="nav-link">Gallery</a>
+        {% if session.get('user_id') %}
+          <a href="{{ url_for('logout') }}" class="nav-link">Logout</a>
+        {% else %}
+          <a href="{{ url_for('login') }}" class="nav-link">Login</a>
+        {% endif %}
+      </div>
+      <button class="hamburger" id="hamburger" aria-label="Toggle menu" aria-expanded="false">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </nav>
+
+  <main class="course-detail-page">
+    <div class="container">
+      <a href="{{ url_for('index') }}#internship" class="back-link">← Back to Courses</a>
+
+      <div class="course-detail-grid">
+        <div class="course-detail-main">
+          <div class="course-detail-hero">
+            {% if course.image %}
+            <img src="{{ course.image }}" alt="{{ course.title }}" class="course-detail-image" />
+            {% else %}
+            <div class="course-detail-image course-detail-image--placeholder">
+              <span>{{ course.category[:2].upper() if course.category else 'CR' }}</span>
+            </div>
+            {% endif %}
+            <div class="course-detail-badges">
+              <span class="course-badge">{{ course.category }}</span>
+              <span class="course-badge course-badge--level">{{ course.level }}</span>
+            </div>
+          </div>
+
+          <h1 class="course-detail-title">{{ course.title }}</h1>
+          <p class="course-detail-summary">{{ course.short_description or course.description }}</p>
+
+          <div class="course-detail-meta">
+            <div class="meta-item">
+              <span class="meta-label">Duration</span>
+              <span class="meta-value">{{ course.duration }}</span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-label">Level</span>
+              <span class="meta-value">{{ course.level }}</span>
+            </div>
+            {% if course.instructor %}
+            <div class="meta-item">
+              <span class="meta-label">Instructor</span>
+              <span class="meta-value">{{ course.instructor }}</span>
+            </div>
+            {% endif %}
+          </div>
+
+          <section class="course-detail-section">
+            <h2>About This Course</h2>
+            <div class="course-detail-text">{{ (course.full_description or course.description) | replace('\n', '<br>') | safe }}</div>
+          </section>
+
+          {% if course.what_you_learn %}
+          <section class="course-detail-section">
+            <h2>What You'll Learn</h2>
+            <ul class="course-learn-list">
+              {% for item in course.what_you_learn.split('\n') if item.strip() %}
+              <li>{{ item.strip() }}</li>
+              {% endfor %}
+            </ul>
+          </section>
+          {% endif %}
+
+          {% if course.highlights %}
+          <section class="course-detail-section">
+            <h2>Course Highlights</h2>
+            <ul class="course-learn-list">
+              {% for item in course.highlights.split('\n') if item.strip() %}
+              <li>{{ item.strip() }}</li>
+              {% endfor %}
+            </ul>
+          </section>
+          {% endif %}
+
+          {% if course.requirements %}
+          <section class="course-detail-section">
+            <h2>Requirements</h2>
+            <ul class="course-requirements-list">
+              {% for item in course.requirements.split('\n') if item.strip() %}
+              <li>{{ item.strip() }}</li>
+              {% endfor %}
+            </ul>
+          </section>
+          {% endif %}
+        </div>
+
+        <aside class="course-purchase-card">
+          <div class="purchase-card-inner">
+            <div class="purchase-price">
+              <span class="purchase-price-label">Course Price</span>
+              <span class="purchase-price-amount">{{ format_price(course) }}</span>
+            </div>
+            <ul class="purchase-includes">
+              <li>Full course access</li>
+              <li>Industry-aligned curriculum</li>
+              <li>Certificate on completion</li>
+              <li>Expert instructor support</li>
+            </ul>
+            <a href="{{ url_for('purchase_course', course_id=course._id) }}" class="btn btn-primary btn-block purchase-btn">
+              Enroll Now — Buy Course
+            </a>
+            <p class="purchase-note">Scan UPI QR, upload payment proof, verify OTP, and join the course WhatsApp group.</p>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </main>
+
+  <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Purchase {{ course.title }} - Aventro Edu Tech</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+</head>
+<body class="sale-page">
+
+  <nav id="navbar" class="sale-nav">
+    <div class="nav-inner">
+      <a href="{{ url_for('index') }}" class="nav-logo">
+        <div class="logo-text">Aventro Edu Tech</div>
+      </a>
+      <div class="nav-links">
+        <a href="{{ url_for('course_detail', course_id=course._id) }}" class="nav-link">Course Details</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="purchase-page">
+    <div class="container">
+      <a href="{{ url_for('course_detail', course_id=course._id) }}" class="back-link">← Back to Course</a>
+
+      <div class="purchase-grid">
+        <div class="purchase-form-section">
+          <h1>Complete Your Enrollment</h1>
+          <p class="purchase-subtitle">Fill in your details to purchase <strong>{{ course.title }}</strong></p>
+
+          {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+              {% for category, message in messages %}
+                <div class="flash-message {{ category }}">{{ message }}</div>
+              {% endfor %}
+            {% endif %}
+          {% endwith %}
+
+          <form method="POST" action="{{ url_for('purchase_course', course_id=course._id) }}" class="purchase-form">
+            <div class="form-section-title">Personal Information</div>
+
+            <div class="form-row">
+              <label class="form-field">
+                <span>Full Name *</span>
+                <input type="text" name="full_name" required value="{{ user.username if user else '' }}" placeholder="Your full name" />
+              </label>
+              <label class="form-field">
+                <span>Email Address *</span>
+                <input type="email" name="email" required value="{{ user.email if user else '' }}" placeholder="you@email.com" />
+              </label>
+            </div>
+
+            <label class="form-field">
+              <span>Phone Number *</span>
+              <input type="tel" name="phone" required placeholder="+91 98765 43210" />
+            </label>
+
+            <div class="form-section-title">Payment Method</div>
+            <div class="payment-options">
+              <label class="payment-option">
+                <input type="radio" name="payment_method" value="online" checked />
+                <span class="payment-option-box">
+                  <strong>Online Transfer / UPI</strong>
+                  <small>Pay via UPI, bank transfer, or card — our team will share payment details</small>
+                </span>
+              </label>
+              <label class="payment-option">
+                <input type="radio" name="payment_method" value="cash" />
+                <span class="payment-option-box">
+                  <strong>Offline / Cash</strong>
+                  <small>Pay in person at our office or via agreed method</small>
+                </span>
+              </label>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block purchase-submit-btn">
+              Confirm Enrollment — {{ format_price(course) }}
+            </button>
+          </form>
+        </div>
+
+        <aside class="order-summary">
+          <h2>Order Summary</h2>
+          <div class="order-summary-course">
+            {% if course.image %}
+            <img src="{{ course.image }}" alt="{{ course.title }}" />
+            {% endif %}
+            <div>
+              <h3>{{ course.title }}</h3>
+              <p>{{ course.short_description or course.description[:120] }}...</p>
+            </div>
+          </div>
+          <div class="order-summary-rows">
+            <div class="order-row">
+              <span>Duration</span>
+              <span>{{ course.duration }}</span>
+            </div>
+            <div class="order-row">
+              <span>Level</span>
+              <span>{{ course.level }}</span>
+            </div>
+            <div class="order-row">
+              <span>Category</span>
+              <span>{{ course.category }}</span>
+            </div>
+            <div class="order-row order-row--total">
+              <span>Total Amount</span>
+              <span class="order-total">{{ format_price(course) }}</span>
+            </div>
+          </div>
+          <div class="order-trust">
+            <p>✓ Secure enrollment process</p>
+            <p>✓ Team confirmation within 24 hours</p>
+            <p>✓ Full refund policy on cancellation</p>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </main>
+
+  <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

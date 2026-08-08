@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Add Course - Aventro Edu Tech</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+  <style>
+    body { background: #f5f5f5; }
+    .form-container { max-width: 900px; margin: 40px auto; padding: 40px; background: white; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+    .form-container h1 { color: #003366; margin-bottom: 10px; }
+    .form-subtitle { color: #666; margin-bottom: 30px; font-size: 0.95rem; }
+    .form-section { margin-bottom: 32px; padding-bottom: 24px; border-bottom: 1px solid #e8f0fe; }
+    .form-section h2 { color: #004a99; font-size: 1.1rem; margin-bottom: 20px; }
+    .form-group { margin-bottom: 20px; }
+    .form-group label { display: block; margin-bottom: 8px; color: #003366; font-weight: 600; }
+    .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 12px; border: 2px solid #e8f0fe; border-radius: 8px; font-size: 1rem; font-family: 'Montserrat', sans-serif; }
+    .form-group textarea { min-height: 120px; resize: vertical; }
+    .form-group textarea.tall { min-height: 180px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .form-group input:focus, .form-group textarea:focus, .form-group select:focus { outline: none; border-color: #004a99; }
+    .form-hint { font-size: 0.85rem; color: #666; margin-top: 6px; }
+    .checkbox-group { display: flex; align-items: center; gap: 10px; }
+    .checkbox-group input { width: auto; }
+    .btn { padding: 14px 30px; background: #004a99; color: white; border: none; border-radius: 8px; font-size: 1rem; font-weight: 700; cursor: pointer; }
+    .btn:hover { background: #003366; }
+    .btn-secondary { background: #6c757d; margin-left: 10px; text-decoration: none; display: inline-block; }
+    .back-link { margin-bottom: 20px; }
+    .back-link a { color: #004a99; text-decoration: none; font-weight: 600; }
+    @media (max-width: 640px) { .form-row { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <div class="form-container">
+    <div class="back-link">
+      <a href="{{ url_for('admin_dashboard') }}">← Back to Admin Portal</a>
+    </div>
+
+    <h1>Add New Course Product</h1>
+    <p class="form-subtitle">Create a course with pricing and full product details for the sale module.</p>
+
+    <form method="POST" action="{{ url_for('add_course') }}" enctype="multipart/form-data">
+      <div class="form-section">
+        <h2>Basic Information</h2>
+        <div class="form-group">
+          <label for="title">Course Title *</label>
+          <input type="text" id="title" name="title" required placeholder="e.g., Python for AI & Engineering" />
+        </div>
+        <div class="form-group">
+          <label for="category">Category *</label>
+          <input type="text" id="category" name="category" required placeholder="e.g., AI, Data Analytics, Python" />
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="duration">Duration *</label>
+            <input type="text" id="duration" name="duration" required placeholder="e.g., 12 Weeks" />
+          </div>
+          <div class="form-group">
+            <label for="level">Level *</label>
+            <select id="level" name="level" required>
+              <option value="">Select Level</option>
+              <option value="Beginner">Beginner</option>
+              <option value="Intermediate">Intermediate</option>
+              <option value="Advanced">Advanced</option>
+              <option value="Beginner to Advanced">Beginner to Advanced</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="instructor">Instructor Name</label>
+          <input type="text" id="instructor" name="instructor" placeholder="e.g., Dr. Rajesh Kumar" />
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h2>Pricing</h2>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="amount">Course Amount (numeric) *</label>
+            <input type="number" id="amount" name="amount" required min="0" step="0.01" placeholder="e.g., 3000" />
+            <p class="form-hint">The actual price customers will pay</p>
+          </div>
+          <div class="form-group">
+            <label for="currency">Currency</label>
+            <select id="currency" name="currency">
+              <option value="INR" selected>INR (₹)</option>
+              <option value="USD">USD ($)</option>
+              <option value="EUR">EUR (€)</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="price">Display Price (optional)</label>
+          <input type="text" id="price" name="price" placeholder="e.g., ₹3,000 / month — auto-generated if left blank" />
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h2>Course Description</h2>
+        <div class="form-group">
+          <label for="short_description">Short Description (for course cards) *</label>
+          <textarea id="short_description" name="short_description" required placeholder="Brief summary shown on the homepage course card (2-3 sentences)"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="description">Summary Description *</label>
+          <textarea id="description" name="description" required placeholder="Main description used across the site"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="full_description">Full Product Description *</label>
+          <textarea id="full_description" name="full_description" class="tall" required placeholder="Complete course description shown on the course detail page. Include curriculum overview, outcomes, and who this course is for."></textarea>
+        </div>
+        <div class="form-group">
+          <label for="what_you_learn">What You'll Learn (one per line)</label>
+          <textarea id="what_you_learn" name="what_you_learn" placeholder="Master Python fundamentals&#10;Build AI/ML projects&#10;Deploy production-ready applications"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="highlights">Course Highlights (one per line)</label>
+          <textarea id="highlights" name="highlights" placeholder="Live instructor sessions&#10;Hands-on projects&#10;Industry certificate"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="requirements">Requirements (one per line)</label>
+          <textarea id="requirements" name="requirements" placeholder="Basic computer knowledge&#10;Laptop with internet connection"></textarea>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h2>Media & Status</h2>
+        <div class="form-group">
+          <label for="image">Course Image</label>
+          <input type="file" id="image" name="image" accept="image/png, image/jpeg, image/jpg, image/gif, image/webp" />
+          <p class="form-hint">PNG, JPG, GIF, WEBP — Max 16MB. Recommended: 1200×675px</p>
+        </div>
+        <div class="form-group checkbox-group">
+          <input type="checkbox" id="is_active" name="is_active" checked />
+          <label for="is_active">Course is active and visible for sale</label>
+        </div>
+      </div>
+
+      <button type="submit" class="btn">Publish Course Product</button>
+      <a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary">Cancel</a>
+    </form>
+  </div>
+</body>
+</html>

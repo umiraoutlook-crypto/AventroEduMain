@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Aventro Educational Tech Solutions</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&family=Source+Serif+4:ital,wght@0,300;0,400;1,300&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+</head>
+
+<body>
+
+  <!-- ===== SPLASH SCREEN ===== -->
+  <div id="splash-screen" class="splash-screen">
+    <div class="splash-content">
+      <div class="splash-logo-container">
+        <img src="{{ url_for('static', filename='logo.jpeg') }}" alt="Aventro Logo" class="splash-logo" />
+      </div>
+      <h1 class="splash-text">
+        <span class="letter">A</span>
+        <span class="letter">v</span>
+        <span class="letter">e</span>
+        <span class="letter">n</span>
+        <span class="letter">t</span>
+        <span class="letter">r</span>
+        <span class="letter">o</span>
+      </h1>
+    </div>
+  </div>
+  <script>
+    (function() {
+      if (sessionStorage.getItem('aventro_splash_shown')) {
+        document.getElementById('splash-screen').style.display = 'none';
+      } else {
+        document.body.classList.add('splash-active');
+      }
+    })();
+  </script>
+
+  <!-- ===== NAVBAR ===== -->
+  <nav id="navbar" class="home-nav">
+    <div class="nav-inner">
+      <a href="{{ url_for('index') }}" class="nav-logo">
+        <div class="logo-text">Aventro Edu Tech</div>
+      </a>
+      <div class="nav-links" id="nav-links">
+        <a href="{{ url_for('index') }}#home" class="nav-link interactive">Home</a>
+        <a href="{{ url_for('index') }}#internship" class="nav-link interactive">Courses</a>
+        <a href="{{ url_for('index') }}#webinars" class="nav-link interactive">Webinars</a>
+        <a href="{{ url_for('index') }}#research" class="nav-link interactive">Research</a>
+        <a href="{{ url_for('gallery') }}" class="nav-link interactive">Gallery</a>
+        <a href="{{ url_for('index') }}#contact" class="nav-link interactive">Contact</a>
+        {% if session.get('user_id') %}
+        {% if session.get('is_admin') %}
+        <a href="{{ url_for('admin_dashboard') }}" class="nav-link interactive">Admin Portal</a>
+        {% endif %}
+        <a href="{{ url_for('logout') }}" class="nav-link interactive">Logout</a>
+        {% else %}
+        <a href="{{ url_for('login') }}" class="nav-link interactive">Login</a>
+        <a href="{{ url_for('register') }}" class="nav-link interactive">Register</a>
+        {% endif %}
+      </div>
+      <button class="hamburger" id="hamburger" aria-label="Toggle menu" aria-expanded="false">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- ===== HERO ===== -->
+  <section id="home" class="hero">
+    <video autoplay muted loop playsinline class="hero-video-bg">
+      <source src="{{ url_for('static', filename='i_need_to_have_it_as_an_Aventr.mp4') }}" type="video/mp4">
+    </video>
+    <div class="hero-video-overlay"></div>
+    
+    <div class="hero-content reveal">
+      <div class="hero-eyebrow">Aventro Edu Tech</div>
+      <h1 class="hero-headline">
+        Shaping the IT Engineers<br />
+        <em>of Tomorrow</em>
+      </h1>
+      <p class="hero-subtext">
+        Aventro Educational Tech Solutions architects the intersection of artificial intelligence and rigorous academic
+        excellence — delivering world-class training, research support, and career-defining internships.
+      </p>
+      <div class="hero-cta-group">
+        <a href="{{ url_for('index') }}#internship" class="btn btn-primary interactive">Explore Programs</a>
+        <a href="{{ url_for('index') }}#research" class="btn btn-white interactive">Research Wing</a>
+      </div>
+      <div class="hero-stats">
+        <div class="stat-item">
+          <span class="stat-number">500+</span>
+          <span class="stat-label">Students Trained</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <span class="stat-number">12+</span>
+          <span class="stat-label">Specializations</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <span class="stat-number">95%</span>
+          <span class="stat-label">Placement Rate</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== TRAINING & INTERNSHIPS ===== -->
+  <section id="internship" class="section training-section">
+    <div class="container">
+      <div class="section-header reveal">
+        <div class="section-eyebrow">Course from Aventro edu Tech</div>
+        <h2 class="section-title">Course from Aventro edu Tech</h2>
+        <p class="section-subtitle">Structured programs that bridge academic knowledge with the precision and
+          expectations of high-performance industry environments.</p>
+      </div>
+      <div class="training-cards">
+        {% for course in courses %}
+        <article class="training-card training-card--featured interactive reveal" id="course-{{ course._id }}">
+          <a href="{{ url_for('course_detail', course_id=course._id) }}" class="training-card-link">
+            <div class="card-number">{{ loop.index }}</div>
+            <div class="training-card-visual training-card-poster">
+              {% if course.image %}
+              <img src="{{ course.image }}" alt="{{ course.title }}" class="training-card-cover-img" />
+              {% else %}
+              <div class="training-card-cover-placeholder">
+                <span class="training-card-cover-initials">{{ course.category[:2].upper() }}</span>
+              </div>
+              {% endif %}
+              <span class="training-card-price">{{ format_price(course) }}</span>
+            </div>
+            <div class="training-card-body">
+              <span class="course-sale-tag">{{ course.category }}</span>
+              <h3 class="card-title">{{ course.title }}</h3>
+              <p class="card-desc">{{ course.short_description or course.description }}</p>
+              <ul class="card-highlights">
+                {% if course.highlights %}
+                {% for highlight in course.highlights.split('\n')[:3] %}
+                {% if highlight.strip() %}
+                <li>{{ highlight.strip() }}</li>
+                {% endif %}
+                {% endfor %}
+                {% else %}
+                <li>Duration: {{ course.duration }}</li>
+                <li>Level: {{ course.level }}</li>
+                {% endif %}
+              </ul>
+              <div class="course-card-actions">
+                <span class="btn btn-primary btn-sm">View & Purchase</span>
+              </div>
+            </div>
+          </a>
+        </article>
+        {% else %}
+        <div class="empty-courses-msg">
+          <p>New courses coming soon. Check back for exciting programs!</p>
+        </div>
+        {% endfor %}
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ===== WORKSHOPS & BOOTCAMPS ===== -->
+  <section class="section workshops-section">
+    <div class="container">
+      <div class="section-header reveal">
+        <div class="section-eyebrow">Workshops & Bootcamps</div>
+        <h2 class="section-title">Intensive Skill<br />Acceleration Programs</h2>
+        <p class="section-subtitle">Focused, high-density learning experiences designed for rapid professional
+          development and immediate practical application.</p>
+      </div>
+      <div class="workshops-grid">
+
+        <div class="workshop-card interactive reveal" data-delay="0">
+          <div class="workshop-index">01</div>
+          <div class="workshop-icon-wrap">
+            <svg viewBox="0 0 40 40" fill="none">
+              <circle cx="20" cy="20" r="17" stroke="currentColor" stroke-width="2" />
+              <path d="M13 20l4 4 10-10" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"
+                stroke-linejoin="round" />
+              <circle cx="20" cy="8" r="2" fill="currentColor" />
+              <circle cx="32" cy="20" r="2" fill="currentColor" />
+            </svg>
+          </div>
+          <h4 class="workshop-title">AI and Tools Bootcamp</h4>
+          <p class="workshop-desc">A rigorous deep-dive into the modern AI ecosystem — covering foundational models,
+            toolchains, and production-ready deployment frameworks.</p>
+          <div class="workshop-duration">4 Weeks Intensive</div>
+        </div>
+
+        <div class="workshop-card interactive reveal" data-delay="100">
+          <div class="workshop-index">02</div>
+          <div class="workshop-icon-wrap">
+            <svg viewBox="0 0 40 40" fill="none">
+              <rect x="6" y="10" width="28" height="20" rx="2" stroke="currentColor" stroke-width="2" />
+              <path d="M13 17h14M13 22h9" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+              <path d="M20 6v4M14 6l2 3M26 6l-2 3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+            </svg>
+          </div>
+          <h4 class="workshop-title">Prompt Engineering Workshop</h4>
+          <p class="workshop-desc">Precision crafting of model instructions across domains. Learn systematic prompting
+            strategies, chain-of-thought techniques, and evaluation methodologies.</p>
+          <div class="workshop-duration">2 Weeks Intensive</div>
+        </div>
+
+        <div class="workshop-card interactive reveal" data-delay="200">
+          <div class="workshop-index">03</div>
+          <div class="workshop-icon-wrap">
+            <svg viewBox="0 0 40 40" fill="none">
+              <rect x="4" y="8" width="32" height="20" rx="2" stroke="currentColor" stroke-width="2" />
+              <circle cx="20" cy="18" r="4" stroke="currentColor" stroke-width="2" />
+              <path d="M10 32l4-4h12l4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round" />
+            </svg>
+          </div>
+          <h4 class="workshop-title">Seminars & Webinars in Gen AI</h4>
+          <p class="workshop-desc">Curated expert-led sessions on emerging generative AI research, real-world case
+            studies, and forward-looking industry applications from practitioners.</p>
+          <div class="workshop-duration">Ongoing Series</div>
+        </div>
+
+        <div class="workshop-card interactive reveal" data-delay="300">
+          <div class="workshop-index">04</div>
+          <div class="workshop-icon-wrap">
+            <svg viewBox="0 0 40 40" fill="none">
+              <path d="M20 6l3.5 8.5H32l-7 5 2.5 8.5L20 23l-7.5 5 2.5-8.5-7-5h8.5L20 6z" stroke="currentColor"
+                stroke-width="2" stroke-linejoin="round" />
+            </svg>
+          </div>
+          <h4 class="workshop-title">Skill Development in Gen AI</h4>
+          <p class="workshop-desc">Structured competency-building programs tailored for professionals and students
+            seeking to integrate Gen AI capabilities into their existing domain expertise.</p>
+          <div class="workshop-duration">6 Weeks Program</div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== UPCOMING WEBINARS ===== -->
+  <section id="webinars" class="section webinars-section">
+    <div class="container">
+      <div class="section-header reveal">
+        <div class="section-eyebrow">Workshops & Webinars</div>
+        <h2 class="section-title">Upcoming<br />Webinars</h2>
+        <p class="section-subtitle">Free sessions to help you get future-ready with practical AI tools you can use in
+          any domain.</p>
+      </div>
+
+      <div class="webinars-grid">
+        {% for blog in blogs %}
+        <a href="{{ url_for('blog_detail', blog_id=blog._id) }}" class="webinar-card interactive reveal" data-delay="0">
+          <div class="webinar-card-media">
+            <div class="webinar-poster-btn interactive">
+              {% if blog.image %}
+              <img src="{{ blog.image }}" alt="{{ blog.title }}" />
+              {% else %}
+              <div class="webinar-cover-placeholder">
+                <span class="webinar-cover-initials">{{ blog.category[:2].upper() }}</span>
+              </div>
+              {% endif %}
+              <span class="webinar-overlay" aria-hidden="true">
+                <span class="webinar-overlay-badge">100% Free</span>
+                <span class="webinar-overlay-cta">View details</span>
+              </span>
+            </div>
+          </div>
+
+          <h4 class="webinar-title">{{ blog.title }}</h4>
+          <p class="webinar-desc">{{ blog.content[:100] }}...</p>
+          <div style="margin: 10px 0; font-size: 0.85rem; color: #666;">
+            <strong>Date:</strong> {{ blog.date }} | <strong>Time:</strong> {{ blog.time }} | <strong>Mode:</strong> {{
+            blog.mode }}
+          </div>
+        </a>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ===== COURSES ===== -->
+  <section id="courses" class="section courses-section">
+    <div class="container">
+      <div class="section-header reveal">
+        <div class="section-eyebrow">Internship and Programs</div>
+        <h2 class="section-title">Internship and Programs</h2>
+        <p class="section-subtitle">Structured coursework built on first-principles thinking, delivering deep expertise
+          in the foundational technologies that power modern software.</p>
+      </div>
+      <div class="courses-grid">
+
+        <div class="course-card interactive reveal">
+          <div class="course-tag">Foundational</div>
+          <div class="course-level-bar"><span style="width:85%"></span></div>
+          <h3 class="course-name">Python for AI & Engineering</h3>
+          <p class="course-desc">A comprehensive study of Python as a scientific and AI engineering language. Covers
+            data structures, algorithmic design, NumPy/Pandas ecosystem, object-oriented paradigms, and integration with
+            machine learning frameworks including TensorFlow and PyTorch.</p>
+          <div class="course-meta">
+            <span class="course-duration">
+              <svg viewBox="0 0 16 16" fill="none">
+                <circle cx="8" cy="8" r="6.5" stroke="currentColor" stroke-width="1.5" />
+                <path d="M8 4.5V8l2.5 2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+              </svg>
+              16 Weeks
+            </span>
+            <span class="course-level">Beginner to Advanced</span>
+          </div>
+          <a href="#contact-form" class="course-enroll interactive">Enroll</a>
+        </div>
+
+        <div class="course-card interactive reveal" data-delay="100">
+          <div class="course-tag">Enterprise</div>
+          <div class="course-level-bar"><span style="width:90%"></span></div>
+          <h3 class="course-name">Java — Systems & Architecture</h3>
+          <p class="course-desc">Enterprise-grade Java development spanning core OOP, design patterns (GoF), Spring Boot
+            microservices, concurrent programming models, JVM internals, and the engineering of scalable, fault-tolerant
+            distributed systems aligned with FAANG-level expectations.</p>
+          <div class="course-meta">
+            <span class="course-duration">
+              <svg viewBox="0 0 16 16" fill="none">
+                <circle cx="8" cy="8" r="6.5" stroke="currentColor" stroke-width="1.5" />
+                <path d="M8 4.5V8l2.5 2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+              </svg>
+              20 Weeks
+            </span>
+            <span class="course-level">Intermediate to Expert</span>
+          </div>
+          <a href="#contact-form" class="course-enroll interactive">Enroll</a>
+        </div>
+
+        <div class="course-card interactive reveal" data-delay="200">
+          <div class="course-tag">Specialized</div>
+          <div class="course-level-bar"><span style="width:80%"></span></div>
+          <h3 class="course-name">Data Analytics & Visualization</h3>
+          <p class="course-desc">A practitioner-oriented program covering the complete data lifecycle: statistical
+            inference, exploratory analysis, feature engineering, model selection, and executive-grade visualization
+            using Power BI, Tableau, and Python-native libraries for strategic decision support.</p>
+          <div class="course-meta">
+            <span class="course-duration">
+              <svg viewBox="0 0 16 16" fill="none">
+                <circle cx="8" cy="8" r="6.5" stroke="currentColor" stroke-width="1.5" />
+                <path d="M8 4.5V8l2.5 2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+              </svg>
+              14 Weeks
+            </span>
+            <span class="course-level">Beginner to Professional</span>
+          </div>
+          <a href="#contact-form" class="course-enroll interactive">Enroll</a>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== GALLERY PREVIEW ===== -->
+  <section id="gallery-preview" class="section gallery-preview-section">
+    <div class="container">
+      <div class="section-header reveal">
+        <div class="section-eyebrow">Our Gallery</div>
+        <h2 class="section-title">Glimpses of Aventro</h2>
+        <p class="section-subtitle">A look into our state-of-the-art learning environments, workshop sessions, and key milestones.</p>
+      </div>
+      
+      {% if gallery_preview %}
+        <div class="gallery-preview-grid">
+          {% for item in gallery_preview %}
+            <a href="{{ url_for('gallery') }}" class="gallery-preview-card reveal" data-delay="{{ loop.index0 * 100 }}">
+              <div class="gallery-preview-img-wrap">
+                <img src="{{ item.image }}" alt="{{ item.title }}" />
+                <div class="gallery-preview-overlay">
+                  <h4>{{ item.title }}</h4>
+                </div>
+              </div>
+            </a>
+          {% endfor %}
+        </div>
+        <div class="gallery-preview-cta reveal">
+          <a href="{{ url_for('gallery') }}" class="btn btn-primary interactive">View Full Gallery</a>
+        </div>
+      {% else %}
+        <div class="empty-gallery-msg">
+          <p>No gallery images uploaded yet.</p>
+        </div>
+      {% endif %}
+    </div>
+  </section>
+
+  <!-- ===== R&D WING ===== -->
+  <section id="research" class="section research-section">
+    <div class="research-bg"></div>
+    <div class="container">
+      <div class="research-inner">
+        <div class="research-left reveal">
+          <div class="section-eyebrow light">Research & Development</div>
+          <h2 class="section-title light">The Aventro<br />R&D Wing</h2>
+          <p class="research-intro">A dedicated intellectual infrastructure supporting scholars, researchers, and
+            academics in pushing the frontier of applied computer science and artificial intelligence.</p>
+          <a href="#contact-form" class="btn btn-white interactive">Collaborate With Us</a>
+        </div>
+        <div class="research-right">
+          <div class="research-pillar interactive reveal" data-delay="0">
+            <div class="pillar-icon">
+              <svg viewBox="0 0 32 32" fill="none">
+                <path d="M16 4l2 5h5l-4 3 1.5 5L16 14l-4.5 3L13 12 9 9h5L16 4z" stroke="currentColor" stroke-width="1.8"
+                  stroke-linejoin="round" />
+                <path d="M8 22h16M10 26h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+              </svg>
+            </div>
+            <div class="pillar-content">
+              <h4>PhD Scholar Support</h4>
+              <p>End-to-end mentorship for doctoral candidates — from research question formulation and literature
+                synthesis to experimental design and scholarly publication strategy.</p>
+            </div>
+          </div>
+          <div class="research-pillar interactive reveal" data-delay="120">
+            <div class="pillar-icon">
+              <svg viewBox="0 0 32 32" fill="none">
+                <rect x="4" y="6" width="24" height="20" rx="2" stroke="currentColor" stroke-width="1.8" />
+                <path d="M10 12h12M10 17h8M10 22h5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+              </svg>
+            </div>
+            <div class="pillar-content">
+              <h4>Research Paper Implementation</h4>
+              <p>Systematic translation of peer-reviewed AI and CS research into working code and reproducible
+                experimental environments, enabling verification and extension of academic findings.</p>
+            </div>
+          </div>
+          <div class="research-pillar interactive reveal" data-delay="240">
+            <div class="pillar-icon">
+              <svg viewBox="0 0 32 32" fill="none">
+                <circle cx="16" cy="16" r="12" stroke="currentColor" stroke-width="1.8" />
+                <path d="M16 8v8l5 3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+                <circle cx="16" cy="16" r="2" fill="currentColor" />
+              </svg>
+            </div>
+            <div class="pillar-content">
+              <h4>Technical Thesis Assistance</h4>
+              <p>Structured guidance on thesis architecture, algorithmic contribution framing, dataset curation, and the
+                rigorous technical writing standards required by top-tier academic institutions.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== GET IN TOUCH SECTION ===== -->
+  <section id="contact" class="contact-section">
+    <div class="container contact-container">
+      <div class="contact-grid">
+        <div class="contact-info-card reveal">
+          <span class="contact-eyebrow">Get In Touch</span>
+          <h2 class="contact-heading">Let's build something great together</h2>
+          <p class="contact-text">Have questions about our high-impact AI/ML internships, Python development courses, or research thesis guidance? Reach out to our training batch coordinators.</p>
+          
+          <div class="contact-details">
+            <div class="contact-detail-item">
+              <div class="detail-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><path d="M22 6l-10 7L2 6"/></svg>
+              </div>
+              <div class="detail-content">
+                <span>Email Us</span>
+                <a href="mailto:aventroedutechsolutions@gmail.com" class="interactive">aventroedutechsolutions@gmail.com</a>
+              </div>
+            </div>
+            <div class="contact-detail-item">
+              <div class="detail-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              </div>
+              <div class="detail-content">
+                <span>Our Location</span>
+                <p>Empowering scholars and professionals across India with world-class AI-driven education.</p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="contact-socials-wrap">
+            <span>Follow Our Updates</span>
+            <div class="contact-socials">
+              <a href="https://www.instagram.com/aventro_edutechsolutions?igsh=aXpvdHY0dW9sM21y" class="social-link interactive" aria-label="Instagram" target="_blank" rel="noopener noreferrer">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4.5"/><circle cx="17.5" cy="6.5" r="1"/></svg>
+              </a>
+              <a href="#" class="social-link interactive" aria-label="LinkedIn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="3"/><path d="M7 10v7M7 7v.5M11 17v-4a2 2 0 014 0v4M11 10v7"/></svg>
+              </a>
+            </div>
+          </div>
+        </div>
+        
+        <div class="contact-form-card reveal" data-delay="150">
+          <h3 class="form-title">Send Us a Message</h3>
+          
+          {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+              <div class="flash-messages" style="margin-bottom: 24px;">
+                {% for category, message in messages %}
+                  {% if 'message' in message or 'Could' in message or 'required' in message %}
+                    {% if category == 'success' %}
+                      <div class="flash-message success" style="padding: 12px; border-radius: 8px; margin-bottom: 16px; font-size: 0.88rem; font-weight: 600; text-align: center; background: rgba(40, 167, 69, 0.15); color: #2fed76; border: 1px solid rgba(40, 167, 69, 0.3);">
+                        {{ message }}
+                      </div>
+                    {% else %}
+                      <div class="flash-message error" style="padding: 12px; border-radius: 8px; margin-bottom: 16px; font-size: 0.88rem; font-weight: 600; text-align: center; background: rgba(220, 53, 69, 0.15); color: #ff6b7a; border: 1px solid rgba(220, 53, 69, 0.3);">
+                        {{ message }}
+                      </div>
+                    {% endif %}
+                  {% endif %}
+                {% endfor %}
+              </div>
+            {% endif %}
+          {% endwith %}
+
+          <form action="{{ url_for('contact') }}" method="POST" class="contact-form-body">
+            <div class="form-grid">
+              <label class="form-field">
+                <span class="form-label">Full Name</span>
+                <input class="form-input interactive" type="text" name="from_name" autocomplete="name" placeholder="John Doe" required />
+              </label>
+              <label class="form-field">
+                <span class="form-label">Email Address</span>
+                <input class="form-input interactive" type="email" name="reply_to" autocomplete="email" placeholder="johndoe@example.com" required />
+              </label>
+              <label class="form-field">
+                <span class="form-label">Phone Number</span>
+                <input class="form-input interactive" type="tel" name="phone" autocomplete="tel" placeholder="+91 98765 43210" />
+              </label>
+              <label class="form-field">
+                <span class="form-label">Subject</span>
+                <input class="form-input interactive" type="text" name="subject" placeholder="Inquiry about AI internship" required />
+              </label>
+            </div>
+            <label class="form-field form-field-full">
+              <span class="form-label">Your Message</span>
+              <textarea class="form-textarea interactive" name="message" rows="5" placeholder="Write your message details here..." required></textarea>
+            </label>
+            
+            <div class="form-actions">
+              <button type="submit" class="btn btn-primary submit-btn interactive">Send Message</button>
+              <p id="contact-form-status" class="form-status" aria-live="polite"></p>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="footer">
+    <div class="footer-top">
+      <div class="container footer-top-inner">
+        <div class="footer-brand reveal">
+          <div class="footer-logo">
+            <div class="logo-text" style="color: white;">Aventro Edu Tech</div>
+          </div>
+          <p class="footer-tagline">Architecting the future of technical education through the disciplined application
+            of artificial intelligence and academic excellence.</p>
+          <div class="footer-socials">
+            <!-- Instagram -->
+            <a href="https://www.instagram.com/aventro_edutechsolutions?igsh=aXpvdHY0dW9sM21y"
+              class="social-link interactive" aria-label="Instagram" target="_blank" rel="noopener noreferrer">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="2" y="2" width="20" height="20" rx="5" stroke="currentColor" stroke-width="1.8" />
+                <circle cx="12" cy="12" r="4.5" stroke="currentColor" stroke-width="1.8" />
+                <circle cx="17.5" cy="6.5" r="1" fill="currentColor" />
+              </svg>
+            </a>
+            <!-- LinkedIn -->
+            <a href="https://www.linkedin.com/company/aventro-edu-tech-solutions/" class="social-link interactive" aria-label="LinkedIn" target="_blank" rel="noopener noreferrer">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="2" y="2" width="20" height="20" rx="3" stroke="currentColor" stroke-width="1.8" />
+                <path d="M7 10v7M7 7v.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+                <path d="M11 17v-4a2 2 0 014 0v4M11 10v7" stroke="currentColor" stroke-width="1.8"
+                  stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </a>
+            <!-- Twitter / X -->
+            <a href="#" class="social-link interactive" aria-label="Twitter">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M4 4l16 16M4 20L20 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+                <path d="M4 4h5l11 16h-5L4 4z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" />
+              </svg>
+            </a>
+          </div>
+        </div>
+        <div class="footer-links-group reveal" data-delay="100">
+          <h5>Programs</h5>
+          <ul>
+            <li><a href="#gen-ai-course-detail" class="interactive" data-open-course="gen-ai-course-detail">Web & App
+                Dev Internship</a></li>
+            <li><a href="#data-analytics-course-detail" class="interactive"
+                data-open-course="data-analytics-course-detail">Data Analytics Internship</a></li>
+            <li><a href="#courses" class="interactive">Python Course</a></li>
+            <li><a href="#courses" class="interactive">Java Course</a></li>
+            <li><a href="#courses" class="interactive">Data Analytics Course</a></li>
+          </ul>
+        </div>
+        <div class="footer-links-group reveal" data-delay="200">
+          <h5>Company</h5>
+          <ul>
+            <li><a href="#home" class="interactive">About Aventro</a></li>
+            <li><a href="#research" class="interactive">R&D Wing</a></li>
+            <li><a href="#contact" class="interactive">Careers</a></li>
+            <li><a href="#contact" class="interactive">Partner With Us</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="container footer-bottom-inner">
+        <p>© 2025 Aventro Educational Tech Solutions. All rights reserved.</p>
+        <div class="footer-legal">
+          <a href="#" class="interactive">Privacy Policy</a>
+          <a href="#" class="interactive">Terms of Service</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.37/dist/lenis.min.js"></script>
+  <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
